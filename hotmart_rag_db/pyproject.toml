@@ -1,0 +1,15 @@
+[project]
+name = "hotmart-rag-db"
+version = "0.1.0"
+description = "API for storing and searching documents related to Hotmart blog"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "chromadb>=0.5.18",
+    "fastapi[standard]>=0.115.5",
+    "langchain>=0.3.7",
+    "langchain-chroma>=0.1.2",
+    "langchain-huggingface>=0.1.2",
+    "sentence-transformers>=3.3.0",
+    "langchain-community>=0.3.7",
+]

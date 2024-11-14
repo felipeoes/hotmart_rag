@@ -1,0 +1,75 @@
+networks:
+  hotmart_net:
+    driver: bridge
+
+services:
+  chroma_db:
+    image: chromadb/chroma
+    ports:
+      - 8092:8000
+    container_name: chroma-db
+    environment:
+      CHROMA_HOST: $CHROMA_HOST
+      CHROMA_PORT: $CHROMA_PORT
+      CHROMA_SERVER_AUTHN_CREDENTIALS: $CHROMA_SERVER_AUTHN_CREDENTIALS
+      CHROMA_SERVER_AUTHN_PROVIDER: $CHROMA_SERVER_AUTHN_PROVIDER
+      CHROMA_CLIENT_AUTH_CREDENTIALS: $CHROMA_CLIENT_AUTH_CREDENTIALS
+      CHROMA_COLLECTION_NAME: $CHROMA_COLLECTION_NAME
+      CHROMA_EMBEDDING_MODEL: $CHROMA_EMBEDDING_MODEL
+
+    networks:
+      - hotmart_net
+
+  ollama:
+    image: ollama/ollama
+    ports:
+      - 11434:11434
+    volumes:
+        - ./hotmart_rag_db/data/ollama/:/root/.ollama
+        - ./hotmart_rag_db/entrypoint.sh:/entrypoint.sh
+    container_name: ollama-hotmart-rag
+    pull_policy: always
+    tty: true
+    restart: always
+    entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
+    networks:
+      - hotmart_net
+      
+      
+  hotmart_rag_db:
+    build: ./hotmart_rag_db/
+    ports:
+      - 8080:80
+    environment:
+      FASTAPI_HOST: $FASTAPI_HOST
+      FASTAPI_PORT: $FASTAPI_PORT
+      CHROMA_HOST: $CHROMA_HOST
+      CHROMA_PORT: $CHROMA_PORT
+      CHROMA_SERVER_AUTHN_CREDENTIALS: CHROMA_SERVER_AUTHN_CREDENTIALS
+      CHROMA_SERVER_AUTHN_PROVIDER: $CHROMA_SERVER_AUTHN_PROVIDER
+      CHROMA_CLIENT_AUTH_CREDENTIALS: $CHROMA_CLIENT_AUTH_CREDENTIALS
+      CHROMA_COLLECTION_NAME: $CHROMA_COLLECTION_NAME
+      CHROMA_EMBEDDING_MODEL: $CHROMA_EMBEDDING_MODEL
+
+    # deploy: # comment this block to use CPU
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    networks:
+      - hotmart_net
+
+  # cocoruta_ui:
+  #   build: ./chatbot-ui/
+  #   ports:
+  #     - 3000:3000
+  #   environment:
+  #     - OPENAI_API_KEY=xyz # dummy, not needed
+  #     - OPENAI_API_HOST=http://cocoruta_api
+  #     - OPENAI_API_HOST_RAG=http://cocoruta_api:8099
+  #   networks:
+  #     - cocoruta_net
+  #   depends_on:
+  #     - cocoruta_api

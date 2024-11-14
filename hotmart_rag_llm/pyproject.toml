@@ -1,0 +1,12 @@
+[project]
+name = "hotmart-rag-llm"
+version = "0.1.0"
+description = "API for RAG-based LLM that answers questions about Hotmart blog"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.115.5",
+    "openai>=1.54.4",
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.3",
+]
