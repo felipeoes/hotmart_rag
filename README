@@ -1,0 +1,70 @@
+# Hotmart RAG App
+A RAG-based app to answer questions about Hotmart. Database is fed based on data present on Hotmart blog page (https://hotmart.com/pt-br/blog/como-funciona-hotmart)
+
+## Features
+- [x] API to make embeddings from text and vector search
+- [x] API for a RAG-based app to answer questions about Hotmart
+
+## Tech Stack
+- `Python` as the main programming language
+- `uv` for package management
+- `ChromaDB` as the open-source vector database
+- `Langchain` for data processing, microservices integrations and helper utilities
+- `FastAPI` for the APIs
+- `Huggingface Transformers` for the multilingual open-source embedding model (Alibaba-NLP/gte-large-en-v1.5)
+- `Ollama` for model serving (used Llama 3.2-3B as the inferece model due to hardware limitations and also because of lower latency and costs)
+- `Docker and Docker Compose` for containerization and orchestration
+
+## Architecture
+The app is composed of 4 main microservices, in which 2 were developed in this project and 2 were used from open-source projects. The two services developed in this project are:
+- `hotmart_rag_db`: Service to store the text embeddings in the ChromaDB vector database and make vector searches
+- `hotmart_rag_llm`: Service that comprises the RAG-based app to answer questions about Hotmart
+
+The two services used from open-source projects are:
+- `chromadb`: Open-source vector database to store and search embeddings
+- `ollama`: Open-source model serving platform to serve the Llama 3.2-3B model
+
+
+## Running the app
+
+### Requirements
+ - Docker and Docker Compose installed (https://docs.docker.com/get-docker/ and https://docs.docker.com/compose/install/)
+ - Windows, Linux or MacOS
+ - Make sure the following ports are available: 8091, 8092, 8093 and 11434
+
+1. Clone the repository and change directory to the repository folder
+```bash
+git clone https://github.com/felipeoes/hotmart_rag
+cd hotmart_rag
+```
+
+2. Create a .env file with the same content as the .env.example file
+```bash
+cp .env.example .env
+```
+
+Optional: Change the values of the .env file if you want to use different ports, database credentials, etc.
+
+3. Build images and start containers
+```bash
+docker-compose up -d
+```
+
+Note: The first time you run the app, it will take some time to download the necessary images and build the containers. After that, the app will start and you can access the APIs at the URLs mentioned below. 
+Also, make sure you comment the below lines in the `docker-compose.yml` file if you are not using a GPU.
+```
+deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
+``` 
+
+
+## API Documentation
+The API documentation for the `hotmart_rag_db` service can be accessed at http://localhost:8091/docs and the one for the `hotmart_rag_llm` service can be accessed at http://localhost:8093/docs
+Note: If you changed the ports in the .env file, make sure to change the ports in the URLs above accordingly.
+
+Also, you can access the POSTMAN collection with the API requests at the following link: https://www.getpostman.com/collections/7

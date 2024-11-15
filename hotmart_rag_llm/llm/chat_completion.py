@@ -22,9 +22,7 @@ class HotmartLLM:
         )
 
     async def get_chat_completion(
-        self, messages: list[dict], 
-        retrieved_docs: list[dict],
-        model: str = "llama3.2"
+        self, messages: list[dict], retrieved_docs: list[dict], model: str = "llama3.2"
     ) -> dict:
         """Get the completion of a chat based on the previous messages.
 
@@ -37,7 +35,7 @@ class HotmartLLM:
             - completion of the chat (dict).
         """
         messages = [{"role": "system", "content": SYSTEM_MESSAGE}, *messages]
-        print(messages)
+
         response = await self.__client.chat.completions.create(
             model=model,
             messages=messages,
@@ -54,7 +52,10 @@ class HotmartLLM:
         return data
 
     async def get_chat_completion_stream(
-        self, messages: list[dict], retrieved_docs: list[dict], model: str = "llama3.2", 
+        self,
+        messages: list[dict],
+        retrieved_docs: list[dict],
+        model: str = "llama3.2",
     ) -> Union[str, AsyncGenerator[str, None]]:
         """Get the completion of a chat based on the previous messages.
 
@@ -68,7 +69,6 @@ class HotmartLLM:
             - generator of completions of the chat (str).
         """
         messages = [{"role": "system", "content": SYSTEM_MESSAGE}, *messages]
-        print(messages)
 
         stream = await self.__client.chat.completions.create(
             model=model,
@@ -88,11 +88,13 @@ class HotmartLLM:
                     "finish_reason": chunk.choices[0].finish_reason,
                 }
                 yield f"data: {json.dumps(data)}\n\n"
-            
+
             # final chunk, add information about retrieved documents
-            data = {
-                "content": "",
-                "finish_reason": chunk.choices[0].finish_reason,
-                "source_docs": retrieved_docs,
-            }
-            yield f"data: {json.dumps(data)}\n\n"
+            print(chunk.choices[0].finish_reason)
+            if chunk.choices[0].finish_reason is not None:
+                data = {
+                    "content": "",
+                    "finish_reason": chunk.choices[0].finish_reason,
+                    "source_docs": retrieved_docs,
+                }
+                yield f"data: {json.dumps(data)}\n\n"

@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Constants
-DB_API_SEARCH_ENDPOINT = "/database/search"
+DB_API_SEARCH_ENDPOINT = "database/search"
 
 # Environment variables
 DB_API_HOST = os.getenv("DB_API_HOST")

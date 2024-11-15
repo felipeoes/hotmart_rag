@@ -14,7 +14,7 @@ services:
     # CHROMA_SERVER_AUTHN_PROVIDER: $CHROMA_SERVER_AUTHN_PROVIDER
     healthcheck:
       test: "curl http://localhost:8000 || exit 1"
-      interval: 30s
+      interval: 5s
       timeout: 10s
       retries: 3
     networks:
@@ -39,14 +39,14 @@ services:
       start_period: 30s
     networks:
       - hotmart_net
-    # # comment this block to use CPU
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: 1
-    #           capabilities: [ gpu ]
+    # comment this block to use CPU
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
 
   hotmart_rag_db:
     build: ./hotmart_rag_db/
@@ -67,7 +67,7 @@ services:
 
     healthcheck:
       test: curl --fail http://localhost:8091/healthcheck || exit 1
-      interval: 15s
+      interval: 30s
       timeout: 10s
       retries: 10
       start_period: 30s
@@ -82,8 +82,8 @@ services:
     environment:
       RAG_LLM_FASTAPI_PORT: $RAG_LLM_FASTAPI_PORT
       RAG_LLM_FASTAPI_HOST: 0.0.0.0
-      LLM_BASE_URL: ollama
-      DB_API_HOST: hotmart_rag_db
+      LLM_BASE_URL: $LLM_BASE_URL
+      DB_API_HOST: $DB_API_HOST
       DB_API_PORT: $FASTAPI_PORT
       SYSTEM_MESSAGE: $SYSTEM_MESSAGE
       TEMPERATURE: $TEMPERATURE
@@ -94,13 +94,13 @@ services:
         condition: service_healthy
       hotmart_rag_db:
         condition: service_healthy
-    # # comment this block to use CPU
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           count: 1
-    #           capabilities: [ gpu ]
+    # comment this block to use CPU
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
     networks:
       - hotmart_net
