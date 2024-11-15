@@ -20,6 +20,11 @@ class RAGDatabase:
         Output:
             -  response (list[dict]): A list of dictionaries, where each dictionary represents a document with keys "page_content", "metadata" and "score".
         """
+
+        # debug
+        print(f"Querying database with query: {query}")
+        print(f"URL: {self.__url}{DB_API_SEARCH_ENDPOINT}")
+
         response = requests.get(
             f"{self.__url}{DB_API_SEARCH_ENDPOINT}", params={"query": query}
         )

@@ -4,39 +4,37 @@ FROM ubuntu:22.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV RAG_LLM_FASTAPI_PORT=$RAG_LLM_FASTAPI_PORT
 ENV RAG_LLM_FASTAPI_HOST=$RAG_LLM_FASTAPI_HOST
+ENV LLM_BASE_URL=$LLM_BASE_URL
 
-# ChromaDB-related
-ENV CHROMA_HOST=$CHROMA_HOST
-ENV CHROMA_PORT=$CHROMA_PORT
-ENV CHROMA_SERVER_AUTHN_CREDENTIALS=$CHROMA_SERVER_AUTHN_CREDENTIALS
-ENV CHROMA_SERVER_AUTHN_PROVIDER=$CHROMA_SERVER_AUTHN_PROVIDER
-ENV CHROMA_CLIENT_AUTH_CREDENTIALS=$CHROMA_CLIENT_AUTH_CREDENTIALS
-ENV CHROMA_COLLECTION_NAME=$CHROMA_COLLECTION_NAME
-ENV CHROMA_EMBEDDING_MODEL=$CHROMA_EMBEDDING_MODEL
+
+# ENV Model inference-related
+ENV SYSTEM_MESSAGE=$SYSTEM_MESSAGE
+ENV TEMPERATURE=$TEMPERATURE
+ENV SEED=$SEED
+ENV MAX_TOKENS=$MAX_TOKENS
+
+# RAG DB API-related
+ENV DB_API_HOST=$DB_API_HOST
+ENV DB_API_PORT=$DB_API_PORT
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    git \
-    unzip \
-    wget \
-    zip \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
 
 # Install uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
+RUN sh /uv-installer.sh && rm /uv-installer.sh
+
+# Ensure the installed binary is on the `PATH`
+ENV PATH="/root/.local/bin/:$PATH"
 
 # Copy project files
-COPY . /hotmart_rag_db
+COPY . /hotmart_rag_llm
 
 # Set working directory
-WORKDIR /hotmart_rag_db
+WORKDIR /hotmart_rag_llm
 
-# Install dependencies
+# Install python libraries
 RUN uv sync
-
-# Expose port
-EXPOSE $FASTAPI_PORT
 
 # Run project
 CMD ["uv", "run", "main.py"]

@@ -2,8 +2,6 @@ import chromadb
 from chromadb.config import Settings
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
-
-# from langchain_community.embeddings.sentence_transformer import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 from config import *
@@ -42,10 +40,10 @@ class ChromaDB:
         return chromadb.HttpClient(
             host=self.host,
             port=self.port,
-            settings=Settings(
-                chroma_client_auth_provider="chromadb.auth.basic_authn.BasicAuthClientProvider",
-                chroma_client_auth_credentials=CHROMA_CLIENT_AUTH_CREDENTIALS,
-            ),
+            # settings=Settings( # Removing authentification for now just to make it easy for other people to run the code
+            #     chroma_client_auth_provider=CHROMA_CLIENT_AUTHN_PROVIDER,
+            #     chroma_client_auth_credentials=CHROMA_CLIENT_AUTH_CREDENTIALS,
+            # ),
         )
 
     def _preprocess_documents(self, documents: list[Document]) -> list[Document]:
@@ -95,13 +93,16 @@ class ChromaDB:
         """
         doc_scores = self.chroma.similarity_search_with_score(query, num_results)
         results: list[dict] = [
-            {"content": doc.page_content, "metadata": doc.metadata, "distance": distance}
+            {
+                "content": doc.page_content,
+                "metadata": doc.metadata,
+                "distance": distance,
+            }
             for doc, distance in doc_scores
         ]
 
         return results
         # return self.chroma.similarity_search_with_score(query, num_results)
-
 
 chroma_db = ChromaDB(
     host=CHROMA_HOST,

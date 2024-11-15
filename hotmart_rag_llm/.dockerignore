@@ -7,13 +7,7 @@ wheels/
 *.egg-info
 
 # Virtual environments
-.venv/
+.venv
 
 # Environment variables
 .env
-
-# Project-related files
-data/*
-models/*
-server.htpasswd
-test.py
