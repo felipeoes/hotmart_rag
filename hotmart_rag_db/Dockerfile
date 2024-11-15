@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM python:3.11-slim
 
 # ENV variables
 ENV DEBIAN_FRONTEND=noninteractive

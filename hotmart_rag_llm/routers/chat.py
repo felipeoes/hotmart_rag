@@ -46,8 +46,6 @@ async def chat(query_req: QueryRequest):
     user_prompt = format_user_prompt(query_req.query, retrieved_docs)
     messages = [{"role": "user", "content": user_prompt}]
 
-    print(messages)
-
     if query_req.stream:
         return StreamingResponse(
             hotmart_llm.get_chat_completion_stream(messages, retrieved_docs),

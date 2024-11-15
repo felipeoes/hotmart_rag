@@ -102,7 +102,6 @@ class ChromaDB:
         ]
 
         return results
-        # return self.chroma.similarity_search_with_score(query, num_results)
 
 chroma_db = ChromaDB(
     host=CHROMA_HOST,
