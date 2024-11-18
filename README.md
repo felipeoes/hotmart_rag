@@ -70,7 +70,7 @@ Note: If you changed the ports in the .env file, make sure to change the ports i
 Also, you can access the POSTMAN collection with the API requests at the following link: https://elements.getpostman.com/redirect?entityId=39244532-90afed10-7b65-4436-b9b0-5447e1b2894b&entityType=collection or by using the file `HOTMART_RAG.postman_collection` in this repository.
 
 ## Considerations and limitations
-- The app was developed in a short period of time and having resources constraints in mind. Prompt engineering was used to mitigate hallucinations, keep the model answers within the domain of Hotmart and ensure inappropriate (harmful) content, but it's known that LLama.3.2-3B can struggle with those issues, mainly because of the lack of fine-tuning to the specific domain and also because of the its nature of being a smaller language model.
+- The app was developed in a short period of time and having resources constraints in mind. Prompt engineering was used to mitigate hallucinations, keep the model answers within the domain of Hotmart and avoid inappropriate (harmful) content, but it's known that LLama.3.2-3B can struggle with those issues, mainly because of the lack of fine-tuning to the specific domain and also because of the its nature of being a smaller language model.
 Some improvements that can be made:
     - Implementing monitoring and observability, as well as a CI/CD pipeline, to keep track of model performance and improve it over time.
     - Fine-tuning both the embeddings and the inference model in order to improve the accuracy of the answers and deal with the specific domain of Hotmart, making sure the answers are factually correct.
